@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "CHANDRA-ALIGN: Planetary Lunar Image Registration Platform",
   "scripts": {
-    "build": "echo 'CHANDRA-ALIGN Production Build Ready'"
+    "build": "mkdir -p dist && cp -r index.html assets data results poster *.pdf dist/ 2>/dev/null || true"
   },
   "repository": {
     "type": "git",
