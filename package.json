@@ -1,0 +1,14 @@
+{
+  "name": "mmic-rawmatrix",
+  "version": "1.0.0",
+  "description": "CHANDRA-ALIGN: Planetary Lunar Image Registration Platform",
+  "scripts": {
+    "build": "mkdir -p dist && cp -r index.html assets data results poster *.pdf dist/ 2>/dev/null || true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hari-2057/SIH26.git"
+  },
+  "author": "Hari-2057",
+  "license": "MIT"
+}

@@ -1,0 +1,12 @@
+# Ignore backend Python scripts and environments for fast Vercel Edge Static deployment
+app.py
+streamlit_app.py
+requirements.txt
+packages.txt
+tests/
+scripts/
+lunar_reg/
+.pytest_cache/
+__pycache__/
+*.pyc
+.DS_Store
