@@ -1,9 +1,11 @@
-# Ignore large backend files and testing cache for fast Vercel build
+# Ignore backend Python scripts and environments for fast Vercel Edge Static deployment
+app.py
+streamlit_app.py
 requirements.txt
 packages.txt
-streamlit_app.py
 tests/
 scripts/
+lunar_reg/
 .pytest_cache/
 __pycache__/
 *.pyc

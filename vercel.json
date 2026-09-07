@@ -1,11 +1,4 @@
 {
   "version": 2,
-  "name": "mmic-rawmatrix",
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/app.py"
-    }
-  ]
+  "cleanUrls": true
 }
