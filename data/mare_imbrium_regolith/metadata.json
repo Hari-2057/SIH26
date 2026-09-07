@@ -1,0 +1,24 @@
+{
+    "id": "mare_imbrium_regolith",
+    "name": "Mare Imbrium (Basaltic Regolith & Micro-Craters)",
+    "description": "Smooth lunar mare plain with subtle micro-impact crater fields and boulder tracks.",
+    "source_mission": "Chandrayaan-2 (ISRO)",
+    "source_instrument": "Terrain Mapping Camera-2 (TMC-2) / OHRC",
+    "reference_mission": "Lunar Reconnaissance Orbiter (LRO NAC) / USGS Basemap",
+    "crs": "Moon 2000 Stereographic (IAU_2000:30100)",
+    "resolution_m_per_px": 2.0,
+    "center_latitude_deg": 32.8,
+    "center_longitude_deg": -15.6,
+    "dimensions_pixels": [
+        720,
+        720
+    ],
+    "sun_azimuth_source_deg": 55.0,
+    "sun_azimuth_reference_deg": 20.0,
+    "files": {
+        "source_geotiff": "data/mare_imbrium_regolith/chandrayaan2_moving.tif",
+        "reference_geotiff": "data/mare_imbrium_regolith/reference_basemap.tif",
+        "source_png": "data/mare_imbrium_regolith/chandrayaan2_moving.png",
+        "reference_png": "data/mare_imbrium_regolith/reference_basemap.png"
+    }
+}

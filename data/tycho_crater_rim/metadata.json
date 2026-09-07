@@ -1,0 +1,24 @@
+{
+    "id": "tycho_crater_rim",
+    "name": "Tycho Crater Rim (High-Albedo Ejecta Rays)",
+    "description": "Chandrayaan-2 TMC-2 optical track capturing steep crater rim walls and radiating ejecta lines.",
+    "source_mission": "Chandrayaan-2 (ISRO)",
+    "source_instrument": "Terrain Mapping Camera-2 (TMC-2) / OHRC",
+    "reference_mission": "Lunar Reconnaissance Orbiter (LRO NAC) / USGS Basemap",
+    "crs": "Moon 2000 Stereographic (IAU_2000:30100)",
+    "resolution_m_per_px": 1.5,
+    "center_latitude_deg": -43.35,
+    "center_longitude_deg": -11.36,
+    "dimensions_pixels": [
+        720,
+        720
+    ],
+    "sun_azimuth_source_deg": 70.0,
+    "sun_azimuth_reference_deg": 35.0,
+    "files": {
+        "source_geotiff": "data/tycho_crater_rim/chandrayaan2_moving.tif",
+        "reference_geotiff": "data/tycho_crater_rim/reference_basemap.tif",
+        "source_png": "data/tycho_crater_rim/chandrayaan2_moving.png",
+        "reference_png": "data/tycho_crater_rim/reference_basemap.png"
+    }
+}

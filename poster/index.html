@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHANDRA-ALIGN | Planetary Lunar Image Registration & 3D Surface Reconstruction Platform</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- KaTeX for crisp mathematical equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & CSS TOKENS: PURE ACADEMIC LIGHT THEME (VERTICAL PORTRAIT)
+       ========================================================================== */
+    :root {
+      --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-heading: 'Space Grotesk', sans-serif;
+      
+      --bg-page: #f1f5f9;
+      --bg-board: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-header: #f8fafc;
+      --bg-card-subtle: #f8fafc;
+      
+      --border-color: #cbd5e1;
+      --border-light: #e2e8f0;
+      --border-accent: #0284c7;
+      
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --text-heading: #091e42;
+      --text-highlight: #0284c7;
+      
+      --accent-blue: #0284c7;
+      --accent-navy: #0f172a;
+      --accent-orange: #ea580c;
+      --accent-green: #16a34a;
+      --accent-purple: #7e22ce;
+      
+      --badge-bg: #e0f2fe;
+      --badge-border: #bae6fd;
+      --badge-text: #0369a1;
+      
+      --shadow-board: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    /* Floating Toolbar (Hidden during Print) */
+    .poster-toolbar {
+      position: fixed;
+      top: 14px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-tool {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-tool:hover {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    .btn-tool.primary {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       POSTER BOARD CONTAINER (PORTRAIT RATIO: STANDARDIZED 1 : 1.414)
+       ========================================================================== */
+    .poster-wrapper {
+      width: 100%;
+      max-width: 1120px;
+      margin: 20px auto 40px auto;
+      padding: 0 10px;
+    }
+
+    .poster-board {
+      background: var(--bg-board);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow-board);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Top Tri-Color ISRO Accent Stripe */
+    .poster-board::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(90deg, #ff9933 0%, #ffffff 30%, #138808 60%, #0284c7 80%, #7e22ce 100%);
+    }
+
+    /* ==========================================================================
+       HEADER SECTION
+       ========================================================================== */
+    .poster-header {
+      display: grid;
+      grid-template-columns: 130px 1fr 130px;
+      align-items: center;
+      gap: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--border-color);
+      margin-top: 4px;
+    }
+
+    .header-logo-box {
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-card-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-main-text {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #ea580c;
+    }
+
+    .logo-sub-text {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .header-center {
+      text-align: center;
+    }
+
+    .header-pills {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--badge-text);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill.orange {
+      background: #ffedd5;
+      border-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .pill.green {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+      color: #15803d;
+    }
+
+    .poster-title {
+      font-family: var(--font-heading);
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .poster-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.35;
+      max-width: 860px;
+      margin: 0 auto 6px auto;
+    }
+
+    .header-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================================================
+       KEY TELEMETRY KPI STRIP (5 CARDS)
+       ========================================================================== */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .telemetry-card {
+      background: #ffffff;
+      border: 1.2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-card);
+      border-left: 3.5px solid var(--accent-blue);
+    }
+
+    .telemetry-card.orange { border-left-color: var(--accent-orange); }
+    .telemetry-card.green { border-left-color: var(--accent-green); }
+    .telemetry-card.purple { border-left-color: var(--accent-purple); }
+
+    .telemetry-icon {
+      font-size: 18px;
+    }
+
+    .telemetry-val {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1.1;
+    }
+
+    .telemetry-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 1px;
+    }
+
+    /* ==========================================================================
+       MAIN PORTRAIT 2-COLUMN GRID
+       ========================================================================== */
+    .poster-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .poster-column {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Modular Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1.2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      background: var(--bg-card-header);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-title-icon {
+      color: var(--accent-blue);
+      font-size: 15px;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: #e2e8f0;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    /* Challenges List */
+    .challenge-box {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .challenge-box strong {
+      font-size: 12px;
+      color: var(--text-heading);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .challenge-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      display: block;
+    }
+
+    /* Mathematical Formulations */
+    .math-row {
+      background: var(--bg-card-subtle);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .math-title {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--accent-blue);
+      margin-bottom: 3px;
+    }
+
+    .math-eq {
+      font-size: 12px;
+      text-align: center;
+      margin: 4px 0;
+      color: var(--text-heading);
+    }
+
+    .math-note {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* 6-Stage Pipeline Flow Grid */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .pipeline-box {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 6px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-badge {
+      position: absolute;
+      top: -6px;
+      left: 6px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      background: var(--accent-blue);
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    .pipeline-title {
+      font-family: var(--font-heading);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .pipeline-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    /* Hero Banner */
+    .hero-container {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      height: 155px;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-caption-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.88) 100%);
+      padding: 8px 12px;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    /* 4-Panel Verification Image Grid */
+    .visual-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .visual-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .visual-thumb {
+      width: 100%;
+      height: 102px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .visual-label {
+      background: var(--bg-card-header);
+      padding: 5px 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-heading);
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Benchmark Table */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .table-custom th {
+      background: var(--bg-card-header);
+      color: var(--text-heading);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .table-custom td {
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--text-main);
+    }
+
+    .table-custom tr.highlight-tr {
+      background: #f0fdf4;
+      font-weight: 700;
+    }
+
+    .table-custom tr.highlight-tr td {
+      border-color: #86efac;
+    }
+
+    .val-win {
+      color: #15803d !important;
+      font-weight: 800;
+    }
+
+    .val-loss {
+      color: #dc2626;
+    }
+
+    /* 3D & GIS Feature List */
+    .features-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .feature-item {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .feature-item-title {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-bottom: 2px;
+    }
+
+    .feature-item-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* ==========================================================================
+       POSTER FOOTER
+       ========================================================================== */
+    .poster-footer {
+      padding-top: 12px;
+      border-top: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .footer-qr-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qr-box {
+      width: 38px;
+      height: 38px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ==========================================================================
+       PRINT SPECIFICATIONS: EXACT SINGLE PAGE PORTRAIT (FIT-TO-PAGE)
+       ========================================================================== */
+    @page {
+      size: 210mm 297mm; /* Standard A4 Portrait */
+      margin: 8mm 6mm;
+    }
+
+    @media print {
+      .poster-toolbar {
+        display: none !important;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        font-size: 8pt !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+      }
+
+      .poster-wrapper {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+      }
+
+      .poster-board {
+        border: 1.5pt solid #0f172a !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 8pt 10pt !important;
+        gap: 6pt !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+      }
+
+      .poster-header {
+        padding-bottom: 6pt !important;
+        gap: 10pt !important;
+      }
+
+      .poster-title {
+        font-size: 15pt !important;
+        margin-bottom: 2pt !important;
+      }
+
+      .poster-subtitle {
+        font-size: 8pt !important;
+        margin-bottom: 2pt !important;
+      }
+
+      .header-meta {
+        font-size: 7.5pt !important;
+      }
+
+      .telemetry-strip {
+        gap: 4pt !important;
+      }
+
+      .telemetry-card {
+        padding: 4pt 6pt !important;
+      }
+
+      .telemetry-val {
+        font-size: 10.5pt !important;
+      }
+
+      .telemetry-lbl {
+        font-size: 6.5pt !important;
+      }
+
+      .poster-grid {
+        gap: 8pt !important;
+      }
+
+      .poster-column {
+        gap: 6pt !important;
+      }
+
+      .card-header {
+        padding: 3pt 6pt !important;
+      }
+
+      .card-title {
+        font-size: 8.5pt !important;
+      }
+
+      .card-body {
+        padding: 5pt 6pt !important;
+        gap: 4pt !important;
+        font-size: 7.5pt !important;
+      }
+
+      .challenge-box {
+        padding: 4pt 6pt !important;
+        gap: 6pt !important;
+      }
+
+      .challenge-box strong {
+        font-size: 7.5pt !important;
+      }
+
+      .challenge-box span {
+        font-size: 7pt !important;
+      }
+
+      .math-row {
+        padding: 4pt 6pt !important;
+      }
+
+      .math-title {
+        font-size: 7pt !important;
+      }
+
+      .math-eq {
+        font-size: 7.5pt !important;
+        margin: 1pt 0 !important;
+      }
+
+      .pipeline-grid {
+        gap: 4pt !important;
+      }
+
+      .pipeline-box {
+        padding: 4pt 3pt !important;
+      }
+
+      .pipeline-title {
+        font-size: 7.5pt !important;
+      }
+
+      .pipeline-desc {
+        font-size: 6.5pt !important;
+      }
+
+      .hero-container {
+        height: 75pt !important;
+      }
+
+      .visual-gallery {
+        gap: 4pt !important;
+      }
+
+      .visual-thumb {
+        height: 48pt !important;
+      }
+
+      .visual-label {
+        padding: 2pt 4pt !important;
+        font-size: 6.5pt !important;
+      }
+
+      .table-custom {
+        font-size: 7pt !important;
+      }
+
+      .table-custom th, .table-custom td {
+        padding: 2.5pt 4pt !important;
+      }
+
+      .features-2col {
+        gap: 4pt !important;
+      }
+
+      .feature-item {
+        padding: 4pt 6pt !important;
+      }
+
+      .feature-item-title {
+        font-size: 7pt !important;
+      }
+
+      .feature-item-desc {
+        font-size: 6.5pt !important;
+      }
+
+      .poster-footer {
+        padding-top: 4pt !important;
+        font-size: 7pt !important;
+      }
+
+      .qr-box {
+        width: 24pt !important;
+        height: 24pt !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FLOATING TOOLBAR -->
+  <div class="poster-toolbar">
+    <button class="btn-tool primary" onclick="window.print()" title="Print Single-Page Portrait PDF">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print / Save Single-Page PDF
+    </button>
+  </div>
+
+  <!-- MAIN POSTER BOARD (PORTRAIT LIGHT THEME) -->
+  <main class="poster-wrapper">
+    <div class="poster-board">
+
+      <!-- HEADER: LOGOS & TITLES -->
+      <header class="poster-header">
+        
+        <!-- Left Logo Box: ISRO & SIH -->
+        <div class="header-logo-box">
+          <div class="logo-main-text">ISRO</div>
+          <div class="logo-sub-text">SIH 2026 FINALS</div>
+        </div>
+
+        <!-- Center Header Content -->
+        <div class="header-center">
+          <div class="header-pills">
+            <span class="pill orange">🚀 Chandrayaan-2 (OHRC / TMC-2 / IIRS)</span>
+            <span class="pill">🛰️ NASA LRO (LROC NAC)</span>
+            <span class="pill green">🎯 RMSE &lt; 0.38 px</span>
+            <span class="pill">🌐 Moon 2000 CRS (IAU_2000:30100)</span>
+          </div>
+          <h1 class="poster-title">PLANETARY LUNAR IMAGE REGISTRATION & 3D DATA PLATFORM</h1>
+          <p class="poster-subtitle">
+            Multi-Modal, Illumination-Invariant & Non-Rigid Alignment for Chandrayaan-2 & LRO Imagery Supporting Autonomous Lunar Navigation & GIS
+          </p>
+          <div class="header-meta">
+            <span>👨‍🚀 <strong>Team Chandra-Align</strong></span>
+            <span>📍 <strong>Smart India Hackathon 2026 (Problem ID: SIH-1644)</strong></span>
+            <span>🏛️ <strong>ISRO & Department of Space (SAC Ahmedabad)</strong></span>
+          </div>
+        </div>
+
+        <!-- Right Logo Box: PDS4 Platform -->
+        <div class="header-logo-box">
+          <div class="logo-main-text" style="color: #0284c7;">PDS4</div>
+          <div class="logo-sub-text">GIS READY</div>
+        </div>
+
+      </header>
+
+      <!-- EXECUTIVE TELEMETRY KPI STRIP -->
+      <section class="telemetry-strip">
+        
+        <div class="telemetry-card">
+          <div class="telemetry-icon">🎯</div>
+          <div>
+            <div class="telemetry-val">0.380 px</div>
+            <div class="telemetry-lbl">Reprojection RMSE</div>
+          </div>
+        </div>
+
+        <div class="telemetry-card orange">
+          <div class="telemetry-icon">☀️</div>
+          <div>
+            <div class="telemetry-val">Δ75° Azimuth</div>
+            <div class="telemetry-lbl">Sun Invariance</div>
+          </div>
+        </div>
+
+        <div class="telemetry-card green">
+          <div class="telemetry-icon">📐</div>
+          <div>
+            <div class="telemetry-val">Thin-Plate Spline</div>
+            <div class="telemetry-lbl">Non-Rigid Warping</div>
+          </div>
+        </div>
+
+        <div class="telemetry-card purple">
+          <div class="telemetry-icon">⚡</div>
+          <div>
+            <div class="telemetry-val">210 ms</div>
+            <div class="telemetry-lbl">Edge Latency</div>
+          </div>
+        </div>
+
+        <div class="telemetry-card">
+          <div class="telemetry-icon">🛰️</div>
+          <div>
+            <div class="telemetry-val">0.25m / 5.0m</div>
+            <div class="telemetry-lbl">Cross-Modal Fusion</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 2-COLUMN BALANCED RESEARCH BODY -->
+      <div class="poster-grid">
+
+        <!-- ==========================================
+             LEFT COLUMN: CHALLENGES, FORMULATION & PIPELINE
+             ========================================== -->
+        <div class="poster-column">
+
+          <!-- 1. Problem Statement & Challenges -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🌋</span> 1. Lunar Photogrammetry Challenges</div>
+              <span class="card-tag">PROBLEM</span>
+            </div>
+            <div class="card-body">
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🌑</div>
+                <div>
+                  <strong>Extreme Sun-Angle Shifts & Polar Shadowing</strong>
+                  <span>Low solar elevations (0° to 75°) cause crater shadow inversions, leading to conventional SIFT/ORB descriptor failure.</span>
+                </div>
+              </div>
+
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🏔️</div>
+                <div>
+                  <strong>Non-Rigid Topographic Relief Parallax</strong>
+                  <span>Steep crater walls (Shackleton & Copernicus) violate global homography rigidity assumptions.</span>
+                </div>
+              </div>
+
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🔭</div>
+                <div>
+                  <strong>Multi-Sensor Scale & Spectral Disparity</strong>
+                  <span>Cross-registering OHRC (0.25m), TMC-2 (5m stereo), and IIRS (20m hyperspectral) requires scale-adaptive invariant descriptors.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Mathematical Core & Formulations -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">📐</span> 2. Core Mathematical Formulations</div>
+              <span class="card-tag">ALGORITHMS</span>
+            </div>
+            <div class="card-body">
+              
+              <div class="math-row">
+                <div class="math-title">RIFT Phase Congruency Maximum Moment (M_ψ):</div>
+                <div class="math-eq">
+                  $$M_\psi = \frac{1}{2} \left[ (T_{xx} + T_{yy}) + \sqrt{(T_{xx} - T_{yy})^2 + 4 T_{xy}^2} \right]$$
+                </div>
+                <div class="math-note">Extracts illumination-invariant boundary structure independent of contrast gradients.</div>
+              </div>
+
+              <div class="math-row">
+                <div class="math-title">Thin-Plate Spline (TPS) Bending Energy Minimization:</div>
+                <div class="math-eq">
+                  $$\min_f \sum_{i=1}^N \|y_i - f(x_i)\|^2 + \lambda \iint_{\mathbb{R}^2} \left( \frac{\partial^2 f}{\partial x^2} + 2\frac{\partial^2 f}{\partial x \partial y} + \frac{\partial^2 f}{\partial y^2} \right) dx dy$$
+                </div>
+                <div class="math-note">Models local topographic deformations via radial basis kernel U(r) = r² ln(r).</div>
+              </div>
+
+              <div class="math-row">
+                <div class="math-title">Adaptive Non-Maximal Suppression (ANMS) Radius:</div>
+                <div class="math-eq">
+                  $$r_i = \min_j \| \mathbf{x}_i - \mathbf{x}_j \| \quad \text{s.t.} \quad f(\mathbf{x}_i) < c_{\text{robust}} \cdot f(\mathbf{x}_j)$$
+                </div>
+                <div class="math-note">Ensures uniform 100% spatial cell distribution across low-contrast lunar mare regolith.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3. 6-Stage Autonomous Pipeline Flow -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🔄</span> 3. 6-Stage Autonomous Pipeline Flow</div>
+              <span class="card-tag">ARCHITECTURE</span>
+            </div>
+            <div class="card-body">
+              <div class="pipeline-grid">
+                
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">01</div>
+                  <div class="pipeline-title">PDS4 Ingestion</div>
+                  <div class="pipeline-desc">XML metadata parsing & Moon 2000 CRS georeferencing</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">02</div>
+                  <div class="pipeline-title">Enhancement</div>
+                  <div class="pipeline-desc">1-99% dynamic stretch & bilateral denoise</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">03</div>
+                  <div class="pipeline-title">RIFT / DL</div>
+                  <div class="pipeline-desc">Phase congruency & SuperPoint descriptors</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">04</div>
+                  <div class="pipeline-title">MAGSAC++</div>
+                  <div class="pipeline-desc">LightGlue correspondence & robust outlier filter</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">05</div>
+                  <div class="pipeline-title">ANMS Grid</div>
+                  <div class="pipeline-desc">Sub-pixel interpolation (&lt;0.4 px RMSE)</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">06</div>
+                  <div class="pipeline-title">TPS Warping</div>
+                  <div class="pipeline-desc">Non-rigid warp & GeoTIFF/GeoJSON export</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==========================================
+             RIGHT COLUMN: VISUAL PROOF, BENCHMARKS & 3D
+             ========================================== -->
+        <div class="poster-column">
+
+          <!-- 4. Hero Mission Banner -->
+          <div class="hero-container">
+            <img src="assets/hero.jpg" alt="Chandrayaan-2 Shackleton Crater Mapping" class="hero-img">
+            <div class="hero-caption-bar">
+              <div>
+                <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 800;">CHANDRAYAAN-2 LUNAR SOUTH POLE MAPPING</div>
+                <div style="font-size: 9.5px; color: #bae6fd;">Laser Tie-Point Telemetry & Polar Orbit Reconnaissance</div>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 9px; color: #fef08a; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px;">
+                89.9°S, 0.0°E | Shackleton
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Experimental Alignment Results -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🔬</span> 4. Experimental Alignment & Verification</div>
+              <span class="card-tag">RESULTS</span>
+            </div>
+            <div class="card-body">
+              <div class="visual-gallery">
+                
+                <div class="visual-card">
+                  <img src="assets/keypoint_matches.png" alt="Tie-points" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>📍 Tie-Point Matches</span>
+                    <span style="color: #0284c7; font-family: var(--font-mono);">0.38 px</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/checkerboard_overlay.png" alt="Checkerboard" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🏁 Seam Continuity</span>
+                    <span style="color: #15803d; font-family: var(--font-mono);">Smooth Rim</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/difference_heatmap.png" alt="Difference Heatmap" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🔥 Residual Heatmap</span>
+                    <span style="color: #0284c7; font-family: var(--font-mono);">28.4 dB</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/grid_uniformity_map.png" alt="Grid Uniformity" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🗺️ ANMS Spatial Grid</span>
+                    <span style="color: #ea580c; font-family: var(--font-mono);">4x4 Uniform</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Quantitative Benchmarks vs SOTA -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">📊</span> 5. Performance Benchmarks vs SOTA</div>
+              <span class="card-tag">EVALUATION</span>
+            </div>
+            <div class="card-body">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>RMSE (px)</th>
+                    <th>Inliers</th>
+                    <th>SSIM</th>
+                    <th>Latency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Standard SIFT</td>
+                    <td class="val-loss">2.41 px</td>
+                    <td>14.2%</td>
+                    <td>0.542</td>
+                    <td>0.48s</td>
+                  </tr>
+                  <tr>
+                    <td>ORB + RANSAC</td>
+                    <td class="val-loss">4.18 px</td>
+                    <td>8.5%</td>
+                    <td>0.418</td>
+                    <td>0.08s</td>
+                  </tr>
+                  <tr>
+                    <td>SuperPoint + Homography</td>
+                    <td>0.84 px</td>
+                    <td>42.0%</td>
+                    <td>0.792</td>
+                    <td>0.35s</td>
+                  </tr>
+                  <tr class="highlight-tr">
+                    <td><strong>CHANDRA-ALIGN (Ours)</strong></td>
+                    <td class="val-win">0.38 px</td>
+                    <td class="val-win">68.5%</td>
+                    <td class="val-win">0.914</td>
+                    <td class="val-win">0.21s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 7. 3D Elevation Platform & Space Impact -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🌐</span> 6. 3D Platform & Mission Impact</div>
+              <span class="card-tag">MISSION VALUE</span>
+            </div>
+            <div class="card-body">
+              <div class="features-2col">
+                
+                <div class="feature-item">
+                  <div class="feature-item-title">🏔️ 3D Terrain DEM</div>
+                  <div class="feature-item-desc">360° wireframe reconstruction with cross-section elevation transects.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">☀️ Sun Time-Machine</div>
+                  <div class="feature-item-desc">Temporal solar tracking (0°–360°) for dynamic shadow modeling.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">🎯 Landing Site Safety</div>
+                  <div class="feature-item-desc">Pinpoint hazard avoidance for Chandrayaan-3/4 and Artemis landing zones.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">❄️ Water-Ice Prospecting</div>
+                  <div class="feature-item-desc">Coregistration of IIRS 3µm absorption bands with high-res OHRC maps.</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER: STANDARDS & METADATA -->
+      <footer class="poster-footer">
+        
+        <div class="footer-qr-container">
+          <div class="qr-box">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 0h4v2h-4v-2zm0 4h2v2h-2v-2zm-4-4h2v4h-2v-4zm0 4v2h-2v-2h2zm4-6h2v2h-2v-2zm-6-2h4v2h-4V8zm2 6h2v2h-2v-2z"/>
+            </svg>
+          </div>
+          <div>
+            <strong>PDS4 Archival Standard</strong> | IAU_2000:30100 Moon 2000 CRS | ISRO Space Applications Centre (SAC) Compliance
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #0284c7; font-weight: 700;">
+            SMART INDIA HACKATHON 2026
+          </div>
+          <div style="font-size: 10px;">
+            Ministry of Education & ISRO | Hardware/Software Grand Finale
+          </div>
+        </div>
+
+      </footer>
+
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'p' && (e.ctrlKey || e.metaKey)) {
+        window.print();
+      }
+    });
+  </script>
+</body>
+</html>

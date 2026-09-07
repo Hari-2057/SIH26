@@ -1,0 +1,87 @@
+{
+    "type": "FeatureCollection",
+    "crs": {
+        "type": "name",
+        "properties": {
+            "name": "urn:ogc:def:crs:IAU2000:30100"
+        }
+    },
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    50.09833812713623,
+                    -2726211.696598816
+                ]
+            },
+            "properties": {
+                "tiepoint_id": 1,
+                "ref_pixel_x": 40.078670501708984,
+                "ref_pixel_y": 211.11727905273438,
+                "source_pixel_x": 50.05302429199219,
+                "source_pixel_y": 200.5177001953125,
+                "map_x_meters": 50.09833812713623,
+                "map_y_meters": -2726211.696598816
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    276.6384506225586,
+                    -2726287.532513428
+                ]
+            },
+            "properties": {
+                "tiepoint_id": 2,
+                "ref_pixel_x": 221.31076049804688,
+                "ref_pixel_y": 271.7860107421875,
+                "source_pixel_x": 224.98043823242188,
+                "source_pixel_y": 275.5778503417969,
+                "map_x_meters": 276.6384506225586,
+                "map_y_meters": -2726287.532513428
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    456.0306930541992,
+                    -2726758.2766845706
+                ]
+            },
+            "properties": {
+                "tiepoint_id": 3,
+                "ref_pixel_x": 364.8245544433594,
+                "ref_pixel_y": 648.38134765625,
+                "source_pixel_x": 337.6537170410156,
+                "source_pixel_y": 642.5206909179688,
+                "map_x_meters": 456.0306930541992,
+                "map_y_meters": -2726758.2766845706
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    643.0381011962891,
+                    -2726203.651211548
+                ]
+            },
+            "properties": {
+                "tiepoint_id": 4,
+                "ref_pixel_x": 514.4304809570312,
+                "ref_pixel_y": 204.68096923828125,
+                "source_pixel_x": 515.00146484375,
+                "source_pixel_y": 228.49583435058594,
+                "map_x_meters": 643.0381011962891,
+                "map_y_meters": -2726203.651211548
+            }
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "id": "manzinus_polar_landing_site",
+    "name": "Manzinus Crater (South Polar Landing Corridor)",
+    "description": "Candidate landing site corridor between Simpelius N and Manzinus C craters.",
+    "source_mission": "Chandrayaan-2 (ISRO)",
+    "source_instrument": "Terrain Mapping Camera-2 (TMC-2) / OHRC",
+    "reference_mission": "Lunar Reconnaissance Orbiter (LRO NAC) / USGS Basemap",
+    "crs": "Moon 2000 Stereographic (IAU_2000:30100)",
+    "resolution_m_per_px": 1.25,
+    "center_latitude_deg": -67.51,
+    "center_longitude_deg": 26.8,
+    "dimensions_pixels": [
+        720,
+        720
+    ],
+    "sun_azimuth_source_deg": 60.0,
+    "sun_azimuth_reference_deg": 30.0,
+    "files": {
+        "source_geotiff": "data/manzinus_polar_landing_site/chandrayaan2_moving.tif",
+        "reference_geotiff": "data/manzinus_polar_landing_site/reference_basemap.tif",
+        "source_png": "data/manzinus_polar_landing_site/chandrayaan2_moving.png",
+        "reference_png": "data/manzinus_polar_landing_site/reference_basemap.png"
+    }
+}
