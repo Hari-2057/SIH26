@@ -1,0 +1,10 @@
+# Ignore large backend files and testing cache for fast Vercel build
+requirements.txt
+packages.txt
+streamlit_app.py
+tests/
+scripts/
+.pytest_cache/
+__pycache__/
+*.pyc
+.DS_Store
