@@ -1,0 +1,21 @@
+{
+  "name": "mmic-rawmatrix",
+  "version": "1.0.0",
+  "description": "CHANDRA-ALIGN: Automated Multi-Modal Lunar Image Registration & 3D Planetary Surface Reconstruction Platform",
+  "scripts": {
+    "build": "mkdir -p dist && cp -r poster/* dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hari-2057/SIH26.git"
+  },
+  "keywords": [
+    "ISRO",
+    "Chandrayaan-2",
+    "Lunar-Registration",
+    "Multi-Modal",
+    "SIH2026"
+  ],
+  "author": "Hari-2057",
+  "license": "MIT"
+}
