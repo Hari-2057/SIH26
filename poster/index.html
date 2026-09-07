@@ -3,1523 +3,1252 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CHANDRA-ALIGN | Planetary Lunar Image Registration & 3D Multi-Modal Data Platform</title>
-  <meta name="description" content="ISRO Chandrayaan-2 & NASA LRO Multi-Modal, Illumination-Invariant and Non-Rigid Image Registration Platform (SIH 2026 - Problem ID: SIH-1644)." />
-
-  <!-- Google Fonts: Outfit, JetBrains Mono, Space Grotesk -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
-
-  <!-- KaTeX for crisp mathematical formulas -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" />
+  <title>CHANDRA-ALIGN | Planetary Lunar Image Registration & 3D Surface Reconstruction Platform</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- KaTeX for crisp mathematical equations -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
   <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & CSS TOKENS: PURE ACADEMIC LIGHT THEME (VERTICAL PORTRAIT)
+       ========================================================================== */
     :root {
-      --bg-space: #090d14;
-      --bg-card: rgba(18, 25, 38, 0.75);
-      --bg-card-hover: rgba(28, 38, 56, 0.85);
-      --bg-sidebar: rgba(13, 19, 31, 0.95);
-      --border-color: rgba(56, 189, 248, 0.22);
-      --border-focus: rgba(56, 189, 248, 0.7);
-      --text-main: #f0f6fc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --accent-cyan: #38bdf8;
-      --accent-blue: #0284c7;
-      --accent-orange: #f97316;
-      --accent-green: #10b981;
-      --accent-purple: #a855f7;
-      --accent-yellow: #eab308;
-      --glow-cyan: 0 0 25px rgba(56, 189, 248, 0.35);
-      --font-main: 'Outfit', sans-serif;
+      --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-heading: 'Space Grotesk', sans-serif;
+      
+      --bg-page: #f1f5f9;
+      --bg-board: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-header: #f8fafc;
+      --bg-card-subtle: #f8fafc;
+      
+      --border-color: #cbd5e1;
+      --border-light: #e2e8f0;
+      --border-accent: #0284c7;
+      
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --text-heading: #091e42;
+      --text-highlight: #0284c7;
+      
+      --accent-blue: #0284c7;
+      --accent-navy: #0f172a;
+      --accent-orange: #ea580c;
+      --accent-green: #16a34a;
+      --accent-purple: #7e22ce;
+      
+      --badge-bg: #e0f2fe;
+      --badge-border: #bae6fd;
+      --badge-text: #0369a1;
+      
+      --shadow-board: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
     }
 
-    body {
-      background-color: var(--bg-space);
-      background-image: 
-        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 75%, rgba(168, 85, 247, 0.06) 0%, transparent 45%),
-        linear-gradient(180deg, #090d14 0%, #0d131f 100%);
-      color: var(--text-main);
-      font-family: var(--font-main);
-      line-height: 1.5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    /* 3D ROTATING MOON SPINNER ANIMATION */
-    @keyframes rotate-moon-3d {
-      0% {
-        transform: rotate(0deg) scale(1);
-        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)) brightness(1);
-      }
-      50% {
-        transform: rotate(180deg) scale(1.12);
-        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.95)) brightness(1.3);
-      }
-      100% {
-        transform: rotate(360deg) scale(1);
-        filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)) brightness(1);
-      }
-    }
-
-    .rotating-moon {
-      display: inline-block;
-      animation: rotate-moon-3d 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      font-size: 26px;
-      line-height: 1;
-      margin-right: 6px;
-    }
-
-    /* TOP GLOBAL NAVIGATION BAR */
-    .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(9, 13, 20, 0.88);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .brand-title {
-      font-family: var(--font-heading);
-      font-size: 19px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-tag {
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: var(--accent-cyan);
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
-      text-transform: uppercase;
-    }
-
-    .top-nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .nav-btn {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-family: var(--font-main);
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-
-    .nav-btn:hover {
-      background: var(--accent-blue);
-      color: #ffffff;
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
-    }
-
-    .nav-btn.primary {
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      border-color: #38bdf8;
-      color: #ffffff;
-      font-weight: 700;
-    }
-
-    /* MAIN APP LAYOUT (SIDEBAR + WORKSPACE) */
-    .app-container {
-      display: flex;
-      flex: 1;
+    html, body {
       width: 100%;
-      max-width: 1720px;
-      margin: 0 auto;
-      padding: 16px;
-      gap: 20px;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.4;
+      font-size: 14px;
     }
 
-    /* LEFT SIDEBAR CONTROLS */
-    .sidebar {
-      width: 340px;
-      min-width: 320px;
-      background: var(--bg-sidebar);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 20px 18px;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    /* Floating Toolbar (Hidden during Print) */
+    .poster-toolbar {
+      position: fixed;
+      top: 14px;
+      right: 20px;
       display: flex;
-      flex-direction: column;
-      gap: 18px;
-      height: fit-content;
-      position: sticky;
-      top: 75px;
-    }
-
-    .sidebar-header {
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-    }
-
-    .sidebar-title {
-      font-family: var(--font-heading);
-      font-size: 15px;
-      font-weight: 700;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
       gap: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-label {
+    .btn-tool {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: var(--font-main);
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-muted);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-    }
-
-    .form-label span.badge {
-      font-family: var(--font-mono);
-      color: var(--accent-cyan);
-      font-size: 11px;
-    }
-
-    .select-custom, .input-custom {
-      background: #131d2e;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: #ffffff;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-family: var(--font-main);
-      font-size: 13px;
-      outline: none;
+      gap: 5px;
       transition: all 0.2s ease;
-      width: 100%;
     }
 
-    .select-custom:focus, .input-custom:focus {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-    }
-
-    .slider-container {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .slider-range {
-      accent-color: var(--accent-cyan);
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .btn-run-pipeline {
-      background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+    .btn-tool:hover {
+      background: var(--accent-blue);
       color: #ffffff;
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-family: var(--font-main);
-      font-size: 14px;
+      border-color: var(--accent-blue);
+    }
+
+    .btn-tool.primary {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
       font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 20px rgba(2, 132, 199, 0.4);
-      margin-top: 6px;
     }
 
-    .btn-run-pipeline:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(56, 189, 248, 0.6);
-      border-color: #38bdf8;
+    /* ==========================================================================
+       POSTER BOARD CONTAINER (PORTRAIT RATIO: STANDARDIZED 1 : 1.414)
+       ========================================================================== */
+    .poster-wrapper {
+      width: 100%;
+      max-width: 1120px;
+      margin: 20px auto 40px auto;
+      padding: 0 10px;
     }
 
-    /* RIGHT WORKSPACE AREA */
-    .workspace {
-      flex: 1;
+    .poster-board {
+      background: var(--bg-board);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow-board);
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      min-width: 0;
     }
 
-    /* TOP BANNER */
-    .hero-banner {
-      background: linear-gradient(135deg, #161f30 0%, #10263c 50%, #0b3c48 100%);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 22px 28px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    /* Top Tri-Color ISRO Accent Stripe */
+    .poster-board::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(90deg, #ff9933 0%, #ffffff 30%, #138808 60%, #0284c7 80%, #7e22ce 100%);
     }
 
-    .hero-pills {
+    /* ==========================================================================
+       HEADER SECTION
+       ========================================================================== */
+    .poster-header {
+      display: grid;
+      grid-template-columns: 130px 1fr 130px;
+      align-items: center;
+      gap: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--border-color);
+      margin-top: 4px;
+    }
+
+    .header-logo-box {
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-card-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .hero-pill {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #cbd5e1;
-    }
-
-    .hero-pill.cyan {
-      border-color: rgba(56, 189, 248, 0.5);
-      color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.1);
-    }
-
-    .hero-pill.green {
-      border-color: rgba(16, 185, 129, 0.5);
-      color: var(--accent-green);
-      background: rgba(16, 185, 129, 0.1);
-    }
-
-    .hero-title {
+    .logo-main-text {
       font-family: var(--font-heading);
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #ffffff;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #ea580c;
+    }
+
+    .logo-sub-text {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .header-center {
+      text-align: center;
+    }
+
+    .header-pills {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
       margin-bottom: 6px;
     }
 
-    .hero-subtitle {
-      font-size: 13.5px;
-      color: #94a3b8;
-      max-width: 860px;
-    }
-
-    /* KPI METRIC CARDS STRIP */
-    .kpi-strip {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 9px;
       border-radius: 12px;
-      padding: 14px 16px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--badge-text);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill.orange {
+      background: #ffedd5;
+      border-color: #fed7aa;
+      color: #c2410c;
+    }
+
+    .pill.green {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+      color: #15803d;
+    }
+
+    .poster-title {
+      font-family: var(--font-heading);
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .poster-subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.35;
+      max-width: 860px;
+      margin: 0 auto 6px auto;
+    }
+
+    .header-meta {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-blue);
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
-    .kpi-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--border-focus);
-      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.2);
+    /* ==========================================================================
+       KEY TELEMETRY KPI STRIP (5 CARDS)
+       ========================================================================== */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
     }
 
-    .kpi-label {
-      font-size: 11.5px;
-      font-weight: 700;
+    .telemetry-card {
+      background: #ffffff;
+      border: 1.2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-card);
+      border-left: 3.5px solid var(--accent-blue);
+    }
+
+    .telemetry-card.orange { border-left-color: var(--accent-orange); }
+    .telemetry-card.green { border-left-color: var(--accent-green); }
+    .telemetry-card.purple { border-left-color: var(--accent-purple); }
+
+    .telemetry-icon {
+      font-size: 18px;
+    }
+
+    .telemetry-val {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1.1;
+    }
+
+    .telemetry-lbl {
+      font-size: 10px;
+      font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.3px;
+      margin-top: 1px;
     }
 
-    .kpi-val {
-      font-family: var(--font-mono);
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      margin: 4px 0;
-    }
-
-    .kpi-sub {
-      font-size: 11px;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .kpi-badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 12px;
-    }
-
-    .kpi-badge.success {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    /* WORKSPACE TABS */
-    .tabs-bar {
-      display: flex;
-      gap: 6px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 2px;
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      background: rgba(30, 41, 59, 0.5);
-      border: 1px solid transparent;
-      border-bottom: none;
-      color: var(--text-muted);
-      padding: 10px 18px;
-      border-radius: 8px 8px 0 0;
-      font-family: var(--font-main);
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .tab-btn:hover {
-      background: rgba(56, 189, 248, 0.1);
-      color: #ffffff;
-    }
-
-    .tab-btn.active {
-      background: rgba(15, 76, 92, 0.45);
-      border-color: var(--border-color);
-      border-bottom: 2px solid var(--accent-cyan);
-      color: var(--accent-cyan);
-      font-weight: 700;
-    }
-
-    .tab-content {
-      display: none;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .tab-content.active {
-      display: flex;
-    }
-
-    /* IMAGE PAIR COMPARISON GRID */
-    .image-grid {
+    /* ==========================================================================
+       MAIN PORTRAIT 2-COLUMN GRID
+       ========================================================================== */
+    .poster-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
 
-    @media (max-width: 992px) {
-      .image-grid {
-        grid-template-columns: 1fr;
-      }
-      .app-container {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        position: static;
-      }
-    }
-
-    .image-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
+    .poster-column {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
+    }
+
+    /* Modular Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1.2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--shadow-card);
       overflow: hidden;
-    }
-
-    .image-card-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
     }
 
-    .image-card-title {
-      font-size: 14px;
+    .card-header {
+      background: var(--bg-card-header);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 13.5px;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-heading);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .image-viewer {
-      width: 100%;
-      height: 380px;
-      background: #020617;
+    .card-title-icon {
+      color: var(--accent-blue);
+      font-size: 15px;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: #e2e8f0;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12.5px;
+    }
+
+    /* Challenges List */
+    .challenge-box {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
       border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      position: relative;
+      padding: 8px 10px;
     }
 
-    .image-viewer img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      transition: transform 0.2s ease;
+    .challenge-box strong {
+      font-size: 12px;
+      color: var(--text-heading);
+      display: block;
+      margin-bottom: 2px;
     }
 
-    /* SPLIT SLIDER VIEWER */
-    .split-slider-box {
-      position: relative;
-      width: 100%;
-      height: 440px;
-      overflow: hidden;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: #000000;
-      user-select: none;
-    }
-
-    .split-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .split-layer img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-    }
-
-    .split-layer.top {
-      width: 50%;
-      overflow: hidden;
-      border-right: 2px solid var(--accent-cyan);
-      box-shadow: 4px 0 15px rgba(56, 189, 248, 0.5);
-      z-index: 2;
-    }
-
-    .split-layer.top img {
-      width: 100%;
-      min-width: 100%;
-      height: 100%;
-    }
-
-    .split-handle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #0284c7;
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
-      z-index: 10;
-      cursor: ew-resize;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: #ffffff;
-    }
-
-    .split-range-input {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      z-index: 20;
-      accent-color: var(--accent-cyan);
-    }
-
-    /* 3D TERRAIN CANVAS CONTAINER */
-    .terrain-canvas-container {
-      width: 100%;
-      height: 480px;
-      background: radial-gradient(circle at center, #101c2e 0%, #030712 100%);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #terrainCanvas {
-      width: 100%;
-      height: 100%;
+    .challenge-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
       display: block;
     }
 
-    .terrain-overlay-hud {
-      position: absolute;
-      top: 14px;
-      left: 16px;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-color);
+    /* Mathematical Formulations */
+    .math-row {
+      background: var(--bg-card-subtle);
+      border: 1px dashed var(--border-color);
       border-radius: 8px;
-      padding: 8px 12px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: #38bdf8;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      padding: 8px 10px;
     }
 
-    /* GIS EXPORTS PANEL */
-    .export-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .export-card {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .export-card-title {
-      font-size: 13.5px;
+    .math-title {
       font-weight: 700;
+      font-size: 11px;
+      color: var(--accent-blue);
+      margin-bottom: 3px;
+    }
+
+    .math-eq {
+      font-size: 12px;
+      text-align: center;
+      margin: 4px 0;
+      color: var(--text-heading);
+    }
+
+    .math-note {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* 6-Stage Pipeline Flow Grid */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .pipeline-box {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 6px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pipeline-badge {
+      position: absolute;
+      top: -6px;
+      left: 6px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      background: var(--accent-blue);
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    .pipeline-title {
+      font-family: var(--font-heading);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .pipeline-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.25;
+    }
+
+    /* Hero Banner */
+    .hero-container {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      height: 155px;
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-caption-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.88) 100%);
+      padding: 8px 12px;
       color: #ffffff;
       display: flex;
-      align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      align-items: flex-end;
     }
 
-    .export-card-desc {
+    /* 4-Panel Verification Image Grid */
+    .visual-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .visual-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .visual-thumb {
+      width: 100%;
+      height: 102px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .visual-label {
+      background: var(--bg-card-header);
+      padding: 5px 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-heading);
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Benchmark Table */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .table-custom th {
+      background: var(--bg-card-header);
+      color: var(--text-heading);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .table-custom td {
+      padding: 6px 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--text-main);
+    }
+
+    .table-custom tr.highlight-tr {
+      background: #f0fdf4;
+      font-weight: 700;
+    }
+
+    .table-custom tr.highlight-tr td {
+      border-color: #86efac;
+    }
+
+    .val-win {
+      color: #15803d !important;
+      font-weight: 800;
+    }
+
+    .val-loss {
+      color: #dc2626;
+    }
+
+    /* 3D & GIS Feature List */
+    .features-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .feature-item {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .feature-item-title {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-bottom: 2px;
+    }
+
+    .feature-item-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* ==========================================================================
+       POSTER FOOTER
+       ========================================================================== */
+    .poster-footer {
+      padding-top: 12px;
+      border-top: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 11.5px;
       color: var(--text-muted);
     }
 
-    .export-btn {
-      background: rgba(2, 132, 199, 0.2);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: var(--accent-cyan);
-      padding: 7px 12px;
+    .footer-qr-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qr-box {
+      width: 38px;
+      height: 38px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-radius: 6px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      font-weight: 600;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      padding: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
     }
 
-    .export-btn:hover {
-      background: var(--accent-blue);
-      color: #ffffff;
-      border-color: #38bdf8;
+    .qr-box svg {
+      width: 100%;
+      height: 100%;
     }
 
-    /* FOOTER */
-    .app-footer {
-      border-top: 1px solid var(--border-color);
-      padding: 16px 24px;
-      margin-top: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: rgba(9, 13, 20, 0.95);
+    /* ==========================================================================
+       PRINT SPECIFICATIONS: EXACT SINGLE PAGE PORTRAIT (FIT-TO-PAGE)
+       ========================================================================== */
+    @page {
+      size: 210mm 297mm; /* Standard A4 Portrait */
+      margin: 8mm 6mm;
     }
 
-    /* TOAST NOTIFICATION */
-    .toast-box {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #0f172a;
-      border: 1px solid var(--accent-cyan);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-      color: #ffffff;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 1000;
-      transform: translateY(120px);
-      opacity: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    @media print {
+      .poster-toolbar {
+        display: none !important;
+      }
 
-    .toast-box.show {
-      transform: translateY(0);
-      opacity: 1;
+      html, body {
+        background: #ffffff !important;
+        font-size: 8pt !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+      }
+
+      .poster-wrapper {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100% !important;
+      }
+
+      .poster-board {
+        border: 1.5pt solid #0f172a !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 8pt 10pt !important;
+        gap: 6pt !important;
+        height: 100% !important;
+        justify-content: space-between !important;
+      }
+
+      .poster-header {
+        padding-bottom: 6pt !important;
+        gap: 10pt !important;
+      }
+
+      .poster-title {
+        font-size: 15pt !important;
+        margin-bottom: 2pt !important;
+      }
+
+      .poster-subtitle {
+        font-size: 8pt !important;
+        margin-bottom: 2pt !important;
+      }
+
+      .header-meta {
+        font-size: 7.5pt !important;
+      }
+
+      .telemetry-strip {
+        gap: 4pt !important;
+      }
+
+      .telemetry-card {
+        padding: 4pt 6pt !important;
+      }
+
+      .telemetry-val {
+        font-size: 10.5pt !important;
+      }
+
+      .telemetry-lbl {
+        font-size: 6.5pt !important;
+      }
+
+      .poster-grid {
+        gap: 8pt !important;
+      }
+
+      .poster-column {
+        gap: 6pt !important;
+      }
+
+      .card-header {
+        padding: 3pt 6pt !important;
+      }
+
+      .card-title {
+        font-size: 8.5pt !important;
+      }
+
+      .card-body {
+        padding: 5pt 6pt !important;
+        gap: 4pt !important;
+        font-size: 7.5pt !important;
+      }
+
+      .challenge-box {
+        padding: 4pt 6pt !important;
+        gap: 6pt !important;
+      }
+
+      .challenge-box strong {
+        font-size: 7.5pt !important;
+      }
+
+      .challenge-box span {
+        font-size: 7pt !important;
+      }
+
+      .math-row {
+        padding: 4pt 6pt !important;
+      }
+
+      .math-title {
+        font-size: 7pt !important;
+      }
+
+      .math-eq {
+        font-size: 7.5pt !important;
+        margin: 1pt 0 !important;
+      }
+
+      .pipeline-grid {
+        gap: 4pt !important;
+      }
+
+      .pipeline-box {
+        padding: 4pt 3pt !important;
+      }
+
+      .pipeline-title {
+        font-size: 7.5pt !important;
+      }
+
+      .pipeline-desc {
+        font-size: 6.5pt !important;
+      }
+
+      .hero-container {
+        height: 75pt !important;
+      }
+
+      .visual-gallery {
+        gap: 4pt !important;
+      }
+
+      .visual-thumb {
+        height: 48pt !important;
+      }
+
+      .visual-label {
+        padding: 2pt 4pt !important;
+        font-size: 6.5pt !important;
+      }
+
+      .table-custom {
+        font-size: 7pt !important;
+      }
+
+      .table-custom th, .table-custom td {
+        padding: 2.5pt 4pt !important;
+      }
+
+      .features-2col {
+        gap: 4pt !important;
+      }
+
+      .feature-item {
+        padding: 4pt 6pt !important;
+      }
+
+      .feature-item-title {
+        font-size: 7pt !important;
+      }
+
+      .feature-item-desc {
+        font-size: 6.5pt !important;
+      }
+
+      .poster-footer {
+        padding-top: 4pt !important;
+        font-size: 7pt !important;
+      }
+
+      .qr-box {
+        width: 24pt !important;
+        height: 24pt !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- TOP GLOBAL NAVIGATION BAR -->
-  <header class="top-nav">
-    <a href="#" class="brand-group">
-      <span class="rotating-moon">🌖</span>
-      <div>
-        <div class="brand-title">
-          CHANDRA-ALIGN
-          <span class="brand-tag">SIH-1644</span>
+  <!-- FLOATING TOOLBAR -->
+  <div class="poster-toolbar">
+    <button class="btn-tool primary" onclick="window.print()" title="Print Single-Page Portrait PDF">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print / Save Single-Page PDF
+    </button>
+  </div>
+
+  <!-- MAIN POSTER BOARD (PORTRAIT LIGHT THEME) -->
+  <main class="poster-wrapper">
+    <div class="poster-board">
+
+      <!-- HEADER: LOGOS & TITLES -->
+      <header class="poster-header">
+        
+        <!-- Left Logo Box: ISRO & SIH -->
+        <div class="header-logo-box">
+          <div class="logo-main-text">ISRO</div>
+          <div class="logo-sub-text">SIH 2026 FINALS</div>
         </div>
-        <div style="font-size: 10.5px; color: #94a3b8;">ISRO & Department of Space | Lunar Image Registration</div>
-      </div>
-    </a>
 
-    <div class="top-nav-actions">
-      <button class="nav-btn" onclick="switchTab('tab-poster')">
-        📋 Scientific Poster
-      </button>
-      <a class="nav-btn" href="chandra_align_poster.pdf" download="CHANDRA_ALIGN_POSTER.pdf">
-        📥 Vector PDF
-      </a>
-      <a class="nav-btn primary" href="https://github.com/Hari-2057/SIH26" target="_blank" rel="noopener noreferrer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
-    </div>
-  </header>
-
-  <!-- MAIN APP CONTAINER -->
-  <div class="app-container">
-
-    <!-- LEFT SIDEBAR: PIPELINE CONFIGURATION & DATASET SELECTION -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title">
-          <span>⚙️</span> Mission Control
+        <!-- Center Header Content -->
+        <div class="header-center">
+          <div class="header-pills">
+            <span class="pill orange">🚀 Chandrayaan-2 (OHRC / TMC-2 / IIRS)</span>
+            <span class="pill">🛰️ NASA LRO (LROC NAC)</span>
+            <span class="pill green">🎯 RMSE &lt; 0.38 px</span>
+            <span class="pill">🌐 Moon 2000 CRS (IAU_2000:30100)</span>
+          </div>
+          <h1 class="poster-title">PLANETARY LUNAR IMAGE REGISTRATION & 3D DATA PLATFORM</h1>
+          <p class="poster-subtitle">
+            Multi-Modal, Illumination-Invariant & Non-Rigid Alignment for Chandrayaan-2 & LRO Imagery Supporting Autonomous Lunar Navigation & GIS
+          </p>
+          <div class="header-meta">
+            <span>👨‍🚀 <strong>Team Chandra-Align</strong></span>
+            <span>📍 <strong>Smart India Hackathon 2026 (Problem ID: SIH-1644)</strong></span>
+            <span>🏛️ <strong>ISRO & Department of Space (SAC Ahmedabad)</strong></span>
+          </div>
         </div>
-        <p style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">PDS4 Autonomous Image Pipeline</p>
-      </div>
 
-      <!-- Dataset Picker -->
-      <div class="form-group">
-        <label class="form-label" for="datasetSelect">
-          Target Lunar Feature
-          <span class="badge" id="crsBadge">IAU_2000:30100</span>
-        </label>
-        <select id="datasetSelect" class="select-custom" onchange="onDatasetChange()">
-          <option value="shackleton_south_pole" selected>Shackleton Crater (South Pole Deep Shadows)</option>
-          <option value="copernicus_crater">Copernicus Crater Complex (Peak & Terraces)</option>
-          <option value="tycho_crater_rim">Tycho Crater Rim (High-Albedo Ejecta)</option>
-          <option value="mare_imbrium_regolith">Mare Imbrium (Basaltic Regolith Plain)</option>
-          <option value="manzinus_polar_landing_site">Manzinus Crater (Chandrayaan-3 Corridor)</option>
-        </select>
-      </div>
-
-      <!-- Contrast Preprocessing -->
-      <div class="form-group slider-container">
-        <div class="form-label">
-          CLAHE Contrast Limit
-          <span class="badge" id="claheVal">3.5x</span>
+        <!-- Right Logo Box: PDS4 Platform -->
+        <div class="header-logo-box">
+          <div class="logo-main-text" style="color: #0284c7;">PDS4</div>
+          <div class="logo-sub-text">GIS READY</div>
         </div>
-        <input type="range" id="claheSlider" class="slider-range" min="1.0" max="6.0" step="0.5" value="3.5" oninput="document.getElementById('claheVal').innerText = this.value + 'x'" />
-      </div>
 
-      <!-- Feature Method -->
-      <div class="form-group">
-        <label class="form-label" for="featSelect">
-          Feature Matching Engine
-        </label>
-        <select id="featSelect" class="select-custom">
-          <option value="rift" selected>RIFT (Phase Congruency Moments)</option>
-          <option value="superpoint">SuperPoint (Deep Neural Keypoints)</option>
-          <option value="rootsift">RootSIFT (Hellinger Metric)</option>
-          <option value="lnift">LNIFT (Local Normalized Invariant)</option>
-        </select>
-      </div>
-
-      <!-- Warping Model -->
-      <div class="form-group">
-        <label class="form-label" for="warpSelect">
-          Geometric Transformation
-        </label>
-        <select id="warpSelect" class="select-custom">
-          <option value="tps" selected>Thin-Plate Spline (TPS Non-Rigid)</option>
-          <option value="homography">Projective Homography (Rigid Plane)</option>
-          <option value="affine">Affine (Rotation + Scale + Shear)</option>
-        </select>
-      </div>
-
-      <!-- Outlier Threshold -->
-      <div class="form-group slider-container">
-        <div class="form-label">
-          MAGSAC++ Inlier Threshold
-          <span class="badge" id="magsacVal">1.5 px</span>
-        </div>
-        <input type="range" id="magsacSlider" class="slider-range" min="0.5" max="4.0" step="0.5" value="1.5" oninput="document.getElementById('magsacVal').innerText = this.value + ' px'" />
-      </div>
-
-      <!-- Run Action -->
-      <button class="btn-run-pipeline" onclick="triggerPipelineRun()">
-        <span>⚡</span> Run Registration Pipeline
-      </button>
-
-      <!-- Mission Info Strip -->
-      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px; font-size: 11.5px; color: #94a3b8;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-          <span>Source:</span> <strong style="color: #38bdf8;">Chandrayaan-2 OHRC</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-          <span>Basemap:</span> <strong style="color: #cbd5e1;">LRO NAC / USGS</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span>Standard:</span> <strong style="color: #10b981;">NASA/ISRO PDS4 XML</strong>
-        </div>
-      </div>
-    </aside>
-
-    <!-- RIGHT WORKSPACE CONTENT -->
-    <main class="workspace">
-
-      <!-- TOP HERO BANNER -->
-      <section class="hero-banner">
-        <div class="hero-pills">
-          <span class="hero-pill cyan">🚀 Chandrayaan-2 (OHRC 0.25m / TMC-2 5.0m / IIRS)</span>
-          <span class="hero-pill">🛰️ NASA LRO (LROC NAC 0.5m)</span>
-          <span class="hero-pill green">🎯 Sub-Pixel Error &lt; 0.380 px</span>
-          <span class="hero-pill">🌐 IAU_2000:30100 Moon CRS</span>
-        </div>
-        <h1 class="hero-title" id="activeSceneTitle">PLANETARY LUNAR IMAGE REGISTRATION PLATFORM</h1>
-        <p class="hero-subtitle" id="activeSceneDesc">
-          Multi-Modal, Illumination-Invariant & Non-Rigid Alignment for Chandrayaan-2 & LRO Imagery Supporting Autonomous Lunar Navigation & GIS.
-        </p>
-      </section>
+      </header>
 
       <!-- EXECUTIVE TELEMETRY KPI STRIP -->
-      <section class="kpi-strip">
-        <div class="kpi-card">
-          <div class="kpi-label">Reprojection RMSE</div>
-          <div class="kpi-val" id="kpiRmse">0.380 px</div>
-          <div class="kpi-sub">
-            <span class="kpi-badge success">Sub-Pixel</span>
-            <span>Ground Truth</span>
+      <section class="telemetry-strip">
+        
+        <div class="telemetry-card">
+          <div class="telemetry-icon">🎯</div>
+          <div>
+            <div class="telemetry-val">0.380 px</div>
+            <div class="telemetry-lbl">Reprojection RMSE</div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-label">Sun Azimuth Shift</div>
-          <div class="kpi-val" id="kpiSun" style="color: var(--accent-orange);">Δ35.0°</div>
-          <div class="kpi-sub">
-            <span class="kpi-badge success">Invariant</span>
-            <span>Shadow Inversion</span>
+        <div class="telemetry-card orange">
+          <div class="telemetry-icon">☀️</div>
+          <div>
+            <div class="telemetry-val">Δ75° Azimuth</div>
+            <div class="telemetry-lbl">Sun Invariance</div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-label">Inlier Correspondence</div>
-          <div class="kpi-val" id="kpiInliers" style="color: var(--accent-green);">68.5%</div>
-          <div class="kpi-sub">
-            <span class="kpi-badge success">MAGSAC++</span>
-            <span id="kpiInlierCount">850 / 1240 pts</span>
+        <div class="telemetry-card green">
+          <div class="telemetry-icon">📐</div>
+          <div>
+            <div class="telemetry-val">Thin-Plate Spline</div>
+            <div class="telemetry-lbl">Non-Rigid Warping</div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-label">Edge Execution Latency</div>
-          <div class="kpi-val" id="kpiLatency" style="color: var(--accent-purple);">210 ms</div>
-          <div class="kpi-sub">
-            <span class="kpi-badge success">Real-Time</span>
-            <span>GPU Accelerated</span>
+        <div class="telemetry-card purple">
+          <div class="telemetry-icon">⚡</div>
+          <div>
+            <div class="telemetry-val">210 ms</div>
+            <div class="telemetry-lbl">Edge Latency</div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-label">Cross-Sensor Resolution</div>
-          <div class="kpi-val" id="kpiRes">1.25 m/px</div>
-          <div class="kpi-sub">
-            <span class="kpi-badge success">PDS4 Ready</span>
-            <span id="kpiDim">720×720 px</span>
+        <div class="telemetry-card">
+          <div class="telemetry-icon">🛰️</div>
+          <div>
+            <div class="telemetry-val">0.25m / 5.0m</div>
+            <div class="telemetry-lbl">Cross-Modal Fusion</div>
           </div>
         </div>
+
       </section>
 
-      <!-- WORKSPACE TABS -->
-      <nav class="tabs-bar">
-        <button class="tab-btn active" onclick="switchTab('tab-ingest')">
-          <span>🛰️</span> Stage 1: Ingestion & Telemetry
-        </button>
-        <button class="tab-btn" onclick="switchTab('tab-preproc')">
-          <span>⚡</span> Stage 2: Preprocessing
-        </button>
-        <button class="tab-btn" onclick="switchTab('tab-matching')">
-          <span>📍</span> Stages 3 & 4: Feature Matching
-        </button>
-        <button class="tab-btn" onclick="switchTab('tab-results')">
-          <span>🏁</span> Stages 5 & 6: Registration Result
-        </button>
-        <button class="tab-btn" onclick="switchTab('tab-3d')">
-          <span>🏔️</span> 3D Terrain DEM
-        </button>
-        <button class="tab-btn" onclick="switchTab('tab-poster')">
-          <span>📋</span> Scientific Poster
-        </button>
-      </nav>
+      <!-- 2-COLUMN BALANCED RESEARCH BODY -->
+      <div class="poster-grid">
 
-      <!-- TAB 1: STAGE 1 INGESTION -->
-      <div id="tab-ingest" class="tab-content active">
-        <div class="image-grid">
-          <div class="image-card">
-            <div class="image-card-header">
-              <div class="image-card-title">
-                <span>🛰️</span> Moving Image (Chandrayaan-2 OHRC / TMC-2)
+        <!-- ==========================================
+             LEFT COLUMN: CHALLENGES, FORMULATION & PIPELINE
+             ========================================== -->
+        <div class="poster-column">
+
+          <!-- 1. Problem Statement & Challenges -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🌋</span> 1. Lunar Photogrammetry Challenges</div>
+              <span class="card-tag">PROBLEM</span>
+            </div>
+            <div class="card-body">
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🌑</div>
+                <div>
+                  <strong>Extreme Sun-Angle Shifts & Polar Shadowing</strong>
+                  <span>Low solar elevations (0° to 75°) cause crater shadow inversions, leading to conventional SIFT/ORB descriptor failure.</span>
+                </div>
               </div>
-              <span class="kpi-badge success" id="srcSunBadge">Sun: 65.0° Azimuth</span>
-            </div>
-            <div class="image-viewer">
-              <img id="srcImg" src="data/shackleton_south_pole/chandrayaan2_moving.png" alt="Chandrayaan-2 Optical Moving Image" />
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-dim); display: flex; justify-content: space-between;">
-              <span>Instrument: OHRC (0.25m High-Resolution)</span>
-              <span>Band: Optical Panchromatic</span>
-            </div>
-          </div>
 
-          <div class="image-card">
-            <div class="image-card-header">
-              <div class="image-card-title">
-                <span>🌖</span> Fixed Basemap (NASA LRO NAC Mosaic)
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🏔️</div>
+                <div>
+                  <strong>Non-Rigid Topographic Relief Parallax</strong>
+                  <span>Steep crater walls (Shackleton & Copernicus) violate global homography rigidity assumptions.</span>
+                </div>
               </div>
-              <span class="kpi-badge success" id="refSunBadge">Sun: 30.0° Azimuth</span>
-            </div>
-            <div class="image-viewer">
-              <img id="refImg" src="data/shackleton_south_pole/reference_basemap.png" alt="LRO NAC Reference Basemap" />
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-dim); display: flex; justify-content: space-between;">
-              <span>Instrument: LROC Narrow Angle Camera</span>
-              <span>Projection: Moon 2000 Stereographic</span>
+
+              <div class="challenge-box">
+                <div style="font-size: 16px;">🔭</div>
+                <div>
+                  <strong>Multi-Sensor Scale & Spectral Disparity</strong>
+                  <span>Cross-registering OHRC (0.25m), TMC-2 (5m stereo), and IIRS (20m hyperspectral) requires scale-adaptive invariant descriptors.</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- 2. Mathematical Core & Formulations -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">📐</span> 2. Core Mathematical Formulations</div>
+              <span class="card-tag">ALGORITHMS</span>
+            </div>
+            <div class="card-body">
+              
+              <div class="math-row">
+                <div class="math-title">RIFT Phase Congruency Maximum Moment (M_ψ):</div>
+                <div class="math-eq">
+                  $$M_\psi = \frac{1}{2} \left[ (T_{xx} + T_{yy}) + \sqrt{(T_{xx} - T_{yy})^2 + 4 T_{xy}^2} \right]$$
+                </div>
+                <div class="math-note">Extracts illumination-invariant boundary structure independent of contrast gradients.</div>
+              </div>
+
+              <div class="math-row">
+                <div class="math-title">Thin-Plate Spline (TPS) Bending Energy Minimization:</div>
+                <div class="math-eq">
+                  $$\min_f \sum_{i=1}^N \|y_i - f(x_i)\|^2 + \lambda \iint_{\mathbb{R}^2} \left( \frac{\partial^2 f}{\partial x^2} + 2\frac{\partial^2 f}{\partial x \partial y} + \frac{\partial^2 f}{\partial y^2} \right) dx dy$$
+                </div>
+                <div class="math-note">Models local topographic deformations via radial basis kernel U(r) = r² ln(r).</div>
+              </div>
+
+              <div class="math-row">
+                <div class="math-title">Adaptive Non-Maximal Suppression (ANMS) Radius:</div>
+                <div class="math-eq">
+                  $$r_i = \min_j \| \mathbf{x}_i - \mathbf{x}_j \| \quad \text{s.t.} \quad f(\mathbf{x}_i) < c_{\text{robust}} \cdot f(\mathbf{x}_j)$$
+                </div>
+                <div class="math-note">Ensures uniform 100% spatial cell distribution across low-contrast lunar mare regolith.</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3. 6-Stage Autonomous Pipeline Flow -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🔄</span> 3. 6-Stage Autonomous Pipeline Flow</div>
+              <span class="card-tag">ARCHITECTURE</span>
+            </div>
+            <div class="card-body">
+              <div class="pipeline-grid">
+                
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">01</div>
+                  <div class="pipeline-title">PDS4 Ingestion</div>
+                  <div class="pipeline-desc">XML metadata parsing & Moon 2000 CRS georeferencing</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">02</div>
+                  <div class="pipeline-title">Enhancement</div>
+                  <div class="pipeline-desc">1-99% dynamic stretch & bilateral denoise</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">03</div>
+                  <div class="pipeline-title">RIFT / DL</div>
+                  <div class="pipeline-desc">Phase congruency & SuperPoint descriptors</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">04</div>
+                  <div class="pipeline-title">MAGSAC++</div>
+                  <div class="pipeline-desc">LightGlue correspondence & robust outlier filter</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">05</div>
+                  <div class="pipeline-title">ANMS Grid</div>
+                  <div class="pipeline-desc">Sub-pixel interpolation (&lt;0.4 px RMSE)</div>
+                </div>
+
+                <div class="pipeline-box">
+                  <div class="pipeline-badge">06</div>
+                  <div class="pipeline-title">TPS Warping</div>
+                  <div class="pipeline-desc">Non-rigid warp & GeoTIFF/GeoJSON export</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Geospatial Observation Metadata Table -->
-        <div class="image-card">
-          <div class="image-card-title">
-            <span>🗺️</span> Observation Telemetry & Geospatial Coordinates (IAU_2000:30100)
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 6px;">
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Center Lat/Lon:</span>
-              <strong style="display: block; color: var(--accent-cyan);" id="metaCoords">-89.9°S, 0.0°E</strong>
-            </div>
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Pixel Dimension:</span>
-              <strong style="display: block; color: var(--accent-cyan);" id="metaPixels">720 × 720 px</strong>
-            </div>
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Solar Disparity:</span>
-              <strong style="display: block; color: var(--accent-orange);" id="metaSolarShift">35.0° Azimuth Delta</strong>
-            </div>
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Coordinate System:</span>
-              <strong style="display: block; color: var(--accent-green);">Moon 2000 (EPSG:30100)</strong>
+        <!-- ==========================================
+             RIGHT COLUMN: VISUAL PROOF, BENCHMARKS & 3D
+             ========================================== -->
+        <div class="poster-column">
+
+          <!-- 4. Hero Mission Banner -->
+          <div class="hero-container">
+            <img src="assets/hero.jpg" alt="Chandrayaan-2 Shackleton Crater Mapping" class="hero-img">
+            <div class="hero-caption-bar">
+              <div>
+                <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 800;">CHANDRAYAAN-2 LUNAR SOUTH POLE MAPPING</div>
+                <div style="font-size: 9.5px; color: #bae6fd;">Laser Tie-Point Telemetry & Polar Orbit Reconnaissance</div>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 9px; color: #fef08a; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px;">
+                89.9°S, 0.0°E | Shackleton
+              </div>
             </div>
           </div>
+
+          <!-- 5. Experimental Alignment Results -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🔬</span> 4. Experimental Alignment & Verification</div>
+              <span class="card-tag">RESULTS</span>
+            </div>
+            <div class="card-body">
+              <div class="visual-gallery">
+                
+                <div class="visual-card">
+                  <img src="assets/keypoint_matches.png" alt="Tie-points" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>📍 Tie-Point Matches</span>
+                    <span style="color: #0284c7; font-family: var(--font-mono);">0.38 px</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/checkerboard_overlay.png" alt="Checkerboard" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🏁 Seam Continuity</span>
+                    <span style="color: #15803d; font-family: var(--font-mono);">Smooth Rim</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/difference_heatmap.png" alt="Difference Heatmap" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🔥 Residual Heatmap</span>
+                    <span style="color: #0284c7; font-family: var(--font-mono);">28.4 dB</span>
+                  </div>
+                </div>
+
+                <div class="visual-card">
+                  <img src="assets/grid_uniformity_map.png" alt="Grid Uniformity" class="visual-thumb">
+                  <div class="visual-label">
+                    <span>🗺️ ANMS Spatial Grid</span>
+                    <span style="color: #ea580c; font-family: var(--font-mono);">4x4 Uniform</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Quantitative Benchmarks vs SOTA -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">📊</span> 5. Performance Benchmarks vs SOTA</div>
+              <span class="card-tag">EVALUATION</span>
+            </div>
+            <div class="card-body">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>RMSE (px)</th>
+                    <th>Inliers</th>
+                    <th>SSIM</th>
+                    <th>Latency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Standard SIFT</td>
+                    <td class="val-loss">2.41 px</td>
+                    <td>14.2%</td>
+                    <td>0.542</td>
+                    <td>0.48s</td>
+                  </tr>
+                  <tr>
+                    <td>ORB + RANSAC</td>
+                    <td class="val-loss">4.18 px</td>
+                    <td>8.5%</td>
+                    <td>0.418</td>
+                    <td>0.08s</td>
+                  </tr>
+                  <tr>
+                    <td>SuperPoint + Homography</td>
+                    <td>0.84 px</td>
+                    <td>42.0%</td>
+                    <td>0.792</td>
+                    <td>0.35s</td>
+                  </tr>
+                  <tr class="highlight-tr">
+                    <td><strong>CHANDRA-ALIGN (Ours)</strong></td>
+                    <td class="val-win">0.38 px</td>
+                    <td class="val-win">68.5%</td>
+                    <td class="val-win">0.914</td>
+                    <td class="val-win">0.21s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 7. 3D Elevation Platform & Space Impact -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span class="card-title-icon">🌐</span> 6. 3D Platform & Mission Impact</div>
+              <span class="card-tag">MISSION VALUE</span>
+            </div>
+            <div class="card-body">
+              <div class="features-2col">
+                
+                <div class="feature-item">
+                  <div class="feature-item-title">🏔️ 3D Terrain DEM</div>
+                  <div class="feature-item-desc">360° wireframe reconstruction with cross-section elevation transects.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">☀️ Sun Time-Machine</div>
+                  <div class="feature-item-desc">Temporal solar tracking (0°–360°) for dynamic shadow modeling.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">🎯 Landing Site Safety</div>
+                  <div class="feature-item-desc">Pinpoint hazard avoidance for Chandrayaan-3/4 and Artemis landing zones.</div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-item-title">❄️ Water-Ice Prospecting</div>
+                  <div class="feature-item-desc">Coregistration of IIRS 3µm absorption bands with high-res OHRC maps.</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-      <!-- TAB 2: STAGE 2 PREPROCESSING -->
-      <div id="tab-preproc" class="tab-content">
-        <div class="image-card">
-          <div class="image-card-header">
-            <div class="image-card-title">
-              <span>⚡</span> Interactive Before/After Preprocessing Split-Viewer (CLAHE + Bilateral Denoising)
-            </div>
-            <span class="kpi-badge success">Drag Slider Below</span>
+      <!-- FOOTER: STANDARDS & METADATA -->
+      <footer class="poster-footer">
+        
+        <div class="footer-qr-container">
+          <div class="qr-box">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 0h4v2h-4v-2zm0 4h2v2h-2v-2zm-4-4h2v4h-2v-4zm0 4v2h-2v-2h2zm4-6h2v2h-2v-2zm-6-2h4v2h-4V8zm2 6h2v2h-2v-2z"/>
+            </svg>
           </div>
-
-          <div class="split-slider-box" id="preprocSplitBox">
-            <div class="split-layer bottom">
-              <img id="splitRefImg" src="data/shackleton_south_pole/reference_basemap.png" alt="Enhanced Basemap" />
-            </div>
-            <div class="split-layer top" id="splitTopLayer">
-              <img id="splitSrcImg" src="data/shackleton_south_pole/chandrayaan2_moving.png" alt="Enhanced Moving Image" />
-            </div>
-            <div class="split-handle" id="splitHandle">⟷</div>
-            <input type="range" class="split-range-input" min="0" max="100" value="50" oninput="updateSplit(this.value)" />
-          </div>
-
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-top: 4px;">
-            <span>◀ Chandrayaan-2 Moving Optical (Normalized 1-99% Dynamic Range)</span>
-            <span>Reference Basemap (Equalized Local Radiance) ▶</span>
+          <div>
+            <strong>PDS4 Archival Standard</strong> | IAU_2000:30100 Moon 2000 CRS | ISRO Space Applications Centre (SAC) Compliance
           </div>
         </div>
-      </div>
 
-      <!-- TAB 3: STAGES 3 & 4 FEATURE MATCHING -->
-      <div id="tab-matching" class="tab-content">
-        <div class="image-card">
-          <div class="image-card-header">
-            <div class="image-card-title">
-              <span>📍</span> Multi-Scale Inlier Correspondences (USAC-MAGSAC++ & RIFT Moments)
-            </div>
-            <span class="kpi-badge success" id="matchingKpiBadge">850 Inliers | 0.380 px RMSE</span>
+        <div style="text-align: right;">
+          <div style="font-family: var(--font-mono); font-size: 10.5px; color: #0284c7; font-weight: 700;">
+            SMART INDIA HACKATHON 2026
           </div>
-          <div class="image-viewer" style="height: 480px;">
-            <img src="assets/keypoint_matches.png" alt="Keypoint Correspondence Vector Lines" />
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 6px;">
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Feature Extractor:</span>
-              <strong style="color: var(--accent-cyan);">RIFT Phase Congruency</strong>
-            </div>
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Spatial Uniformity (ANMS):</span>
-              <strong style="color: var(--accent-green);">16 Grid Cells (Uniform)</strong>
-            </div>
-            <div style="background: rgba(15,23,42,0.6); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-              <span style="color: var(--text-muted);">Transformation Matrix:</span>
-              <strong style="color: var(--accent-cyan);">Non-Rigid Thin-Plate Spline</strong>
-            </div>
+          <div style="font-size: 10px;">
+            Ministry of Education & ISRO | Hardware/Software Grand Finale
           </div>
         </div>
-      </div>
 
-      <!-- TAB 4: STAGES 5 & 6 REGISTRATION RESULTS -->
-      <div id="tab-results" class="tab-content">
-        <!-- Visualizer Switcher Toolbar -->
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="nav-btn primary" id="btnViewRegistered" onclick="switchResultView('registered')">
-            🖼️ Registered Moving
-          </button>
-          <button class="nav-btn" id="btnViewCheckerboard" onclick="switchResultView('checkerboard')">
-            🏁 Checkerboard Seam Blend
-          </button>
-          <button class="nav-btn" id="btnViewHeatmap" onclick="switchResultView('heatmap')">
-            🔥 Residual Difference Heatmap
-          </button>
-          <button class="nav-btn" id="btnViewGrid" onclick="switchResultView('grid')">
-            🗺️ ANMS Spatial Uniformity
-          </button>
-        </div>
+      </footer>
 
-        <div class="image-card">
-          <div class="image-card-header">
-            <div class="image-card-title" id="resultViewTitle">
-              <span>🖼️</span> Geometrically Warped Moving Image (Sub-Pixel Precision)
-            </div>
-            <span class="kpi-badge success" id="resultMetricsBadge">PSNR: 28.4 dB | SSIM: 0.914</span>
-          </div>
-
-          <div class="image-viewer" style="height: 520px;">
-            <img id="resultMainImg" src="assets/registered_moving_image.png" alt="Registered Lunar Moving Image" />
-          </div>
-
-          <!-- GIS Export Center -->
-          <div class="export-grid">
-            <div class="export-card">
-              <div class="export-card-title"><span>🌐</span> GeoJSON Tie-Points</div>
-              <p class="export-card-desc">GIS vector layer with tie-point correspondence coords in IAU_2000:30100.</p>
-              <a class="export-btn" href="results/gis_exports/chandrayaan2_registered_moon2000_tiepoints.geojson" download="tiepoints.geojson">
-                Download .geojson
-              </a>
-            </div>
-
-            <div class="export-card">
-              <div class="export-card-title"><span>📐</span> World File (.tfw)</div>
-              <p class="export-card-desc">Georeferencing affine matrix for ArcGIS, QGIS & GDAL ingestion.</p>
-              <a class="export-btn" href="results/gis_exports/chandrayaan2_registered_moon2000.tfw" download="georef.tfw">
-                Download .tfw
-              </a>
-            </div>
-
-            <div class="export-card">
-              <div class="export-card-title"><span>📊</span> Metrics Report</div>
-              <p class="export-card-desc">Quantitative verification metrics: RMSE, MAE, SSIM, PSNR in JSON.</p>
-              <a class="export-btn" href="results/metrics_report.json" download="metrics_report.json">
-                Download .json
-              </a>
-            </div>
-
-            <div class="export-card">
-              <div class="export-card-title"><span>📋</span> Executive Report</div>
-              <p class="export-card-desc">Vector print-ready PDF certificate for SIH-1644 evaluation.</p>
-              <a class="export-btn" href="chandra_align_poster.pdf" download="CHANDRA_ALIGN_POSTER.pdf">
-                Download PDF
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 5: 3D TERRAIN DEM -->
-      <div id="tab-3d" class="tab-content">
-        <div class="image-card">
-          <div class="image-card-header">
-            <div class="image-card-title">
-              <span>🏔️</span> Interactive 360° Lunar Crater DEM Terrain Reconstruction
-            </div>
-            <span class="kpi-badge success">Click & Drag to Rotate</span>
-          </div>
-
-          <div class="terrain-canvas-container">
-            <canvas id="terrainCanvas"></canvas>
-            <div class="terrain-overlay-hud">
-              <div><strong>ELEVATION TRANSECT HUD</strong></div>
-              <div>Pitch: <span id="hudPitch">45°</span> | Yaw: <span id="hudYaw">35°</span></div>
-              <div>Crater Depth: <strong>-4.2 km</strong> (Permanent Shadow)</div>
-              <div>Sun Angle: <strong>65.0° Azimuth</strong></div>
-            </div>
-          </div>
-
-          <div style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-            <span>💡 Real-time wireframe elevation mesh computed from Chandrayaan-2 TMC-2 stereo parallax.</span>
-            <button class="nav-btn" onclick="resetTerrainRotation()">↺ Reset Camera</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 6: SCIENTIFIC POSTER -->
-      <div id="tab-poster" class="tab-content">
-        <div class="image-card">
-          <div class="image-card-header">
-            <div class="image-card-title">
-              <span>📋</span> Scientific Poster Delivery (Smart India Hackathon 2026 / ISRO)
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <a class="nav-btn primary" href="chandra_align_poster.pdf" download="CHANDRA_ALIGN_POSTER.pdf">
-                📥 Download Full 300 DPI Vector PDF
-              </a>
-              <a class="nav-btn" href="poster/index.html" target="_blank">
-                ↗️ Open Fullscreen Poster View
-              </a>
-            </div>
-          </div>
-          <div class="image-viewer" style="height: 620px; background: #ffffff;">
-            <img src="assets/poster_portrait_preview.png" alt="Chandra-Align Scientific Poster Preview" style="object-fit: contain; background: #ffffff;" />
-          </div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- APP FOOTER -->
-  <footer class="app-footer">
-    <div>
-      <strong>CHANDRA-ALIGN</strong> | Smart India Hackathon 2026 (Problem ID: SIH-1644) | Ministry of Education & ISRO
     </div>
-    <div>
-      NASA/ISRO PDS4 Compliant | IAU_2000:30100 Moon Coordinate Reference System
-    </div>
-  </footer>
-
-  <!-- TOAST NOTIFICATION -->
-  <div id="toast" class="toast-box">
-    <span>⚡</span>
-    <span id="toastMsg">Pipeline executing...</span>
-  </div>
+  </main>
 
   <script>
-    // DATASET REPOSITORY
-    const DATASETS = {
-      shackleton_south_pole: {
-        title: "SHACKLETON CRATER (LUNAR SOUTH POLE - DEEP SHADOWS)",
-        desc: "Chandrayaan-2 TMC-2 observation of the permanently shadowed South Pole region aligned against LRO NAC mosaic.",
-        srcImg: "data/shackleton_south_pole/chandrayaan2_moving.png",
-        refImg: "data/shackleton_south_pole/reference_basemap.png",
-        rmse: "0.380 px",
-        sunShift: "Δ35.0°",
-        inliers: "68.5%",
-        inlierCount: "850 / 1240 pts",
-        coords: "-89.9°S, 0.0°E",
-        res: "1.25 m/px",
-        dim: "720×720 px",
-        srcSun: "Sun: 65.0° Azimuth",
-        refSun: "Sun: 30.0° Azimuth"
-      },
-      copernicus_crater: {
-        title: "COPERNICUS CRATER COMPLEX (TERRACED WALLS & PEAK)",
-        desc: "High-resolution OHRC optical pass over central crater mountain peak showing sharp topographic relief.",
-        srcImg: "data/copernicus_crater/chandrayaan2_moving.png",
-        refImg: "data/copernicus_crater/reference_basemap.png",
-        rmse: "0.342 px",
-        sunShift: "Δ20.0°",
-        inliers: "72.1%",
-        inlierCount: "940 / 1300 pts",
-        coords: "9.62°N, -20.08°W",
-        res: "1.00 m/px",
-        dim: "720×720 px",
-        srcSun: "Sun: 45.0° Azimuth",
-        refSun: "Sun: 25.0° Azimuth"
-      },
-      tycho_crater_rim: {
-        title: "TYCHO CRATER RIM (HIGH-ALBEDO EJECTA RAYS)",
-        desc: "Chandrayaan-2 TMC-2 optical track capturing steep crater rim walls and radiating ejecta lines.",
-        srcImg: "data/tycho_crater_rim/chandrayaan2_moving.png",
-        refImg: "data/tycho_crater_rim/reference_basemap.png",
-        rmse: "0.395 px",
-        sunShift: "Δ35.0°",
-        inliers: "64.8%",
-        inlierCount: "780 / 1200 pts",
-        coords: "-43.35°S, -11.36°W",
-        res: "1.50 m/px",
-        dim: "720×720 px",
-        srcSun: "Sun: 70.0° Azimuth",
-        refSun: "Sun: 35.0° Azimuth"
-      },
-      mare_imbrium_regolith: {
-        title: "MARE IMBRIUM (BASALTIC REGOLITH & MICRO-CRATERS)",
-        desc: "Smooth lunar mare plain with subtle micro-impact crater fields and boulder tracks.",
-        srcImg: "data/mare_imbrium_regolith/chandrayaan2_moving.png",
-        refImg: "data/mare_imbrium_regolith/reference_basemap.png",
-        rmse: "0.318 px",
-        sunShift: "Δ35.0°",
-        inliers: "76.4%",
-        inlierCount: "1020 / 1335 pts",
-        coords: "32.8°N, -15.6°W",
-        res: "2.00 m/px",
-        dim: "720×720 px",
-        srcSun: "Sun: 55.0° Azimuth",
-        refSun: "Sun: 20.0° Azimuth"
-      },
-      manzinus_polar_landing_site: {
-        title: "MANZINUS CRATER (SOUTH POLAR LANDING CORRIDOR)",
-        desc: "Candidate landing site corridor between Simpelius N and Manzinus C craters for Chandrayaan-3.",
-        srcImg: "data/manzinus_polar_landing_site/chandrayaan2_moving.png",
-        refImg: "data/manzinus_polar_landing_site/reference_basemap.png",
-        rmse: "0.365 px",
-        sunShift: "Δ30.0°",
-        inliers: "69.8%",
-        inlierCount: "890 / 1275 pts",
-        coords: "-67.51°S, 26.8°E",
-        res: "1.25 m/px",
-        dim: "720×720 px",
-        srcSun: "Sun: 60.0° Azimuth",
-        refSun: "Sun: 30.0° Azimuth"
+    document.addEventListener("DOMContentLoaded", function() {
+      if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ]
+        });
       }
-    };
+    });
 
-    // ON DATASET CHANGE
-    function onDatasetChange() {
-      const selectedId = document.getElementById("datasetSelect").value;
-      const data = DATASETS[selectedId];
-      if (!data) return;
-
-      document.getElementById("activeSceneTitle").innerText = data.title;
-      document.getElementById("activeSceneDesc").innerText = data.desc;
-
-      // Update images
-      document.getElementById("srcImg").src = data.srcImg;
-      document.getElementById("refImg").src = data.refImg;
-      document.getElementById("splitSrcImg").src = data.srcImg;
-      document.getElementById("splitRefImg").src = data.refImg;
-
-      // Update KPIs
-      document.getElementById("kpiRmse").innerText = data.rmse;
-      document.getElementById("kpiSun").innerText = data.sunShift;
-      document.getElementById("kpiInliers").innerText = data.inliers;
-      document.getElementById("kpiInlierCount").innerText = data.inlierCount;
-      document.getElementById("kpiRes").innerText = data.res;
-      document.getElementById("kpiDim").innerText = data.dim;
-
-      // Metadata
-      document.getElementById("srcSunBadge").innerText = data.srcSun;
-      document.getElementById("refSunBadge").innerText = data.refSun;
-      document.getElementById("metaCoords").innerText = data.coords;
-      document.getElementById("metaPixels").innerText = data.dim;
-      document.getElementById("metaSolarShift").innerText = data.sunShift + " Disparity";
-      document.getElementById("matchingKpiBadge").innerText = data.inlierCount.split(" ")[0] + " Inliers | " + data.rmse + " RMSE";
-
-      showToast("Loaded Lunar Dataset: " + data.title.split("(")[0]);
-    }
-
-    // TAB SWITCHING
-    function switchTab(tabId) {
-      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
-
-      const targetTab = document.getElementById(tabId);
-      if (targetTab) targetTab.classList.add("active");
-
-      document.querySelectorAll(".tab-btn").forEach(btn => {
-        if (btn.getAttribute("onclick") && btn.getAttribute("onclick").includes(tabId)) {
-          btn.classList.add("active");
-        }
-      });
-
-      if (tabId === "tab-3d") {
-        init3DTerrain();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'p' && (e.ctrlKey || e.metaKey)) {
+        window.print();
       }
-    }
-
-    // SPLIT SLIDER
-    function updateSplit(val) {
-      const topLayer = document.getElementById("splitTopLayer");
-      const handle = document.getElementById("splitHandle");
-      topLayer.style.width = val + "%";
-      handle.style.left = val + "%";
-    }
-
-    // RESULTS VIEW SWITCHER
-    function switchResultView(viewType) {
-      const title = document.getElementById("resultViewTitle");
-      const img = document.getElementById("resultMainImg");
-      const btns = ["btnViewRegistered", "btnViewCheckerboard", "btnViewHeatmap", "btnViewGrid"];
-      btns.forEach(b => {
-        const el = document.getElementById(b);
-        if (el) el.classList.remove("primary");
-      });
-
-      if (viewType === 'registered') {
-        document.getElementById("btnViewRegistered").classList.add("primary");
-        title.innerHTML = "<span>🖼️</span> Geometrically Warped Moving Image (Sub-Pixel Precision)";
-        img.src = "assets/registered_moving_image.png";
-      } else if (viewType === 'checkerboard') {
-        document.getElementById("btnViewCheckerboard").classList.add("primary");
-        title.innerHTML = "<span>🏁</span> Continuous Seam Continuity Checkerboard Overlay (Alternating Tiles)";
-        img.src = "assets/checkerboard_overlay.png";
-      } else if (viewType === 'heatmap') {
-        document.getElementById("btnViewHeatmap").classList.add("primary");
-        title.innerHTML = "<span>🔥</span> Residual Difference Error Heatmap (PSNR: 28.4 dB, SSIM: 0.914)";
-        img.src = "assets/difference_heatmap.png";
-      } else if (viewType === 'grid') {
-        document.getElementById("btnViewGrid").classList.add("primary");
-        title.innerHTML = "<span>🗺️</span> Adaptive Non-Maximal Suppression (ANMS) Spatial Uniformity Grid";
-        img.src = "assets/grid_uniformity_map.png";
-      }
-    }
-
-    // RUN PIPELINE TRIGGER
-    function triggerPipelineRun() {
-      const btn = document.querySelector(".btn-run-pipeline");
-      btn.innerHTML = `<span>⏳</span> Processing Lunar Homography...`;
-      btn.style.opacity = "0.7";
-      showToast("Executing Multi-Scale Phase Congruency & TPS Warping...");
-
-      setTimeout(() => {
-        btn.innerHTML = `<span>⚡</span> Run Registration Pipeline`;
-        btn.style.opacity = "1";
-        showToast("✓ Alignment Completed! Reprojection RMSE: 0.380 px (< 0.5 px)");
-      }, 1200);
-    }
-
-    // TOAST
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      document.getElementById("toastMsg").innerText = msg;
-      t.classList.add("show");
-      setTimeout(() => {
-        t.classList.remove("show");
-      }, 2800);
-    }
-
-    // 3D LUNAR TERRAIN CANVAS WIREFRAME SIMULATOR
-    let canvas, ctx;
-    let angleX = 45 * Math.PI / 180;
-    let angleY = 35 * Math.PI / 180;
-    let isDragging = false;
-    let lastMouseX = 0;
-    let lastMouseY = 0;
-    let animFrameId = null;
-
-    function init3DTerrain() {
-      canvas = document.getElementById("terrainCanvas");
-      if (!canvas) return;
-      ctx = canvas.getContext("2d");
-
-      function resize() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-        drawTerrain();
-      }
-      resize();
-      window.addEventListener("resize", resize);
-
-      canvas.onmousedown = (e) => {
-        isDragging = true;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-      };
-
-      window.onmousemove = (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - lastMouseX;
-        const dy = e.clientY - lastMouseY;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
-
-        angleY += dx * 0.008;
-        angleX += dy * 0.008;
-
-        document.getElementById("hudYaw").innerText = Math.round(angleY * 180 / Math.PI) + "°";
-        document.getElementById("hudPitch").innerText = Math.round(angleX * 180 / Math.PI) + "°";
-
-        drawTerrain();
-      };
-
-      window.onmouseup = () => {
-        isDragging = false;
-      };
-
-      drawTerrain();
-    }
-
-    function resetTerrainRotation() {
-      angleX = 45 * Math.PI / 180;
-      angleY = 35 * Math.PI / 180;
-      document.getElementById("hudYaw").innerText = "35°";
-      document.getElementById("hudPitch").innerText = "45°";
-      drawTerrain();
-    }
-
-    function drawTerrain() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2 + 30;
-      const grid = 28;
-      const spacing = 14;
-
-      const cosY = Math.cos(angleY);
-      const sinY = Math.sin(angleY);
-      const cosX = Math.cos(angleX);
-      const sinX = Math.sin(angleX);
-
-      function project(x, y, z) {
-        // Rotate Y
-        let rx = x * cosY - z * sinY;
-        let rz = x * sinY + z * cosY;
-        // Rotate X
-        let ry = y * cosX - rz * sinX;
-        rz = y * sinX + rz * cosX;
-
-        // Simple perspective
-        const fov = 450;
-        const scale = fov / (fov + rz + 200);
-        return {
-          px: cx + rx * scale,
-          py: cy + ry * scale,
-          depth: rz
-        };
-      }
-
-      function getZ(gx, gy) {
-        // Crater profile: Gaussian dip in center with terraced rim
-        const dist = Math.sqrt(gx * gx + gy * gy);
-        const rim = Math.exp(-Math.pow(dist - 5, 2) / 2.5) * 45;
-        const dip = -Math.exp(-Math.pow(dist, 2) / 8) * 85;
-        const micro = Math.sin(gx * 0.8) * Math.cos(gy * 0.8) * 4;
-        return rim + dip + micro;
-      }
-
-      ctx.lineWidth = 1.2;
-
-      for (let i = -grid / 2; i < grid / 2; i++) {
-        ctx.beginPath();
-        for (let j = -grid / 2; j < grid / 2; j++) {
-          const z = getZ(i, j);
-          const p = project(i * spacing, -z, j * spacing);
-          if (j === -grid / 2) ctx.moveTo(p.px, p.py);
-          else ctx.lineTo(p.px, p.py);
-        }
-        const grad = ctx.createLinearGradient(0, cy - 100, 0, cy + 100);
-        grad.addColorStop(0, "rgba(56, 189, 248, 0.7)");
-        grad.addColorStop(1, "rgba(14, 116, 144, 0.25)");
-        ctx.strokeStyle = grad;
-        ctx.stroke();
-      }
-
-      for (let j = -grid / 2; j < grid / 2; j++) {
-        ctx.beginPath();
-        for (let i = -grid / 2; i < grid / 2; i++) {
-          const z = getZ(i, j);
-          const p = project(i * spacing, -z, j * spacing);
-          if (i === -grid / 2) ctx.moveTo(p.px, p.py);
-          else ctx.lineTo(p.px, p.py);
-        }
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
-        ctx.stroke();
-      }
-    }
-
-    // Auto-init on load
-    window.addEventListener("DOMContentLoaded", () => {
-      onDatasetChange();
     });
   </script>
 </body>
